@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/react-face-detection-app/static/css/main.68857e34.css",
+    "main.js": "/react-face-detection-app/static/js/main.4d35af83.js",
+    "static/js/787.abb527d9.chunk.js": "/react-face-detection-app/static/js/787.abb527d9.chunk.js",
+    "index.html": "/react-face-detection-app/index.html",
+    "main.68857e34.css.map": "/react-face-detection-app/static/css/main.68857e34.css.map",
+    "main.4d35af83.js.map": "/react-face-detection-app/static/js/main.4d35af83.js.map",
+    "787.abb527d9.chunk.js.map": "/react-face-detection-app/static/js/787.abb527d9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.68857e34.css",
+    "static/js/main.4d35af83.js"
+  ]
+}
