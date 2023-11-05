@@ -1,27 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import './Signin.css';
-const Signin = ({onRouteChange}) => {
+const Signin = ({ onRouteChange }) => {
+    const [user, setUser] = useState({
+        email: "",
+        password: ""
+    })
+    const onChange = (e) => {
+        console.log(e)
+        setUser({
+            ...user,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onLogin = async () => {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email, password: user.password })
+        })
+        const json = await response.json()
+        console.log(json)
+        if (json.success) {
+            localStorage.setItem("token", json.authtoken)
+            onRouteChange("home")
+        }
+        else {
+            alert("Invalid Credentials")
+        }
+    }
     return (
         <article class="br3 shadow-5 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw5 center ">
-        <div className="box ">
-            <form autocomplete="off">
-                <h2>Sign in</h2>
-                <div className="inputBox">
-                    <input type="text" required="required"/>
+            <div className="box ">
+                <dic className="outdiv">
+                    <h2>Sign in</h2>
+                    <div className="inputBox">
+                        <input id="email" name='email' type="text" required="required" onChange={onChange} />
                         <span>E-mail</span>
                         <i></i>
-                </div>
-                <div className="inputBox">
-                    <input type="password" required="required"/>
+                    </div>
+                    <div className="inputBox">
+                        <input id="password" name='password' type="password" required="required" onChange={onChange} />
                         <span>Password</span>
                         <i></i>
-                </div>
-                <div className="links">
-                    <p onClick={()=>onRouteChange("register")} href="#">Register</p>
-                </div>
-                <input onClick={()=>onRouteChange("home")} type="submit" value="Sign In"/>
-            </form>
-        </div>
+                    </div>
+                    <div className="links">
+                        <p onClick={() => onRouteChange("register")} href="#">Register</p>
+                    </div>
+                    <input onClick={onLogin} type="submit" value="Sign In" />
+                </dic>
+            </div>
         </article>
     );
 }
