@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './Signin.css';
+import { Link, useNavigate } from "react-router-dom"
 const Signin = ({ onRouteChange }) => {
     const [user, setUser] = useState({
         email: "",
@@ -12,6 +13,7 @@ const Signin = ({ onRouteChange }) => {
             [e.target.name]: e.target.value
         })
     }
+    const navigate = useNavigate();
     const onLogin = async () => {
         const response = await fetch("http://localhost:5000/api/auth/login", {
             method: "post",
@@ -23,6 +25,7 @@ const Signin = ({ onRouteChange }) => {
         if (json.success) {
             localStorage.setItem("token", json.authtoken)
             onRouteChange("home")
+            navigate("/home")
         }
         else {
             alert("Invalid Credentials")
@@ -44,7 +47,7 @@ const Signin = ({ onRouteChange }) => {
                         <i></i>
                     </div>
                     <div className="links">
-                        <p onClick={() => onRouteChange("register")} href="#">Register</p>
+                        <Link to={"/signup"} onClick={() => onRouteChange("register")} href="#">Register</Link>
                     </div>
                     <input onClick={onLogin} type="submit" value="Sign In" />
                 </dic>

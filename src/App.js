@@ -7,7 +7,13 @@ import FaceRecognition from './FaceRecognition';
 import Rank from './Rank';
 import Signin from './Signin';
 import Register from './Register';
-
+import Dashboard from './Dashboard';
+import NavigationAuth from './NavigationAuth';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 
 
@@ -21,9 +27,9 @@ class App extends Component {
     this.state = {
       searchField: "",
       ImageURL: "",
-      box:{},
-      route:'signin',
-      isSignedIn:false,
+      box: {},
+      route: 'signin',
+      isSignedIn: false,
       raw: {
         "user_app_id": {
           "user_id": "amandevops",
@@ -49,32 +55,30 @@ class App extends Component {
       }
     }
   }
-  onRouteChange=(route)=>{
-    if(route==='signout')
-    {
-      this.setState({isSignedIn:false});
+  onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState({ isSignedIn: false });
     }
-    else if(route==="home")
-    {
-      this.setState({isSignedIn:true});
+    else if (route === "home") {
+      this.setState({ isSignedIn: true });
     }
-    this.setState({route:route})
+    this.setState({ route: route })
   }
-  calculateFaceLocation=(data)=>{
-    const clarifaiFace=data.outputs[0].data.regions[0].region_info.bounding_box
-    const image =document.getElementById('inputimage');
-    const width=Number(image.width);
-    const height=Number(image.height);
-    return{
-      leftCol:clarifaiFace.left_col*width,
-      topRow:clarifaiFace.top_row*height,
-      rightCol:width-(clarifaiFace.right_col*width),
-      bottomRow:height-(clarifaiFace.bottom_row*height),
+  calculateFaceLocation = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height),
 
     }
   }
-  displayFace=(box)=>{
-    this.setState({box:box});
+  displayFace = (box) => {
+    this.setState({ box: box });
     console.log(box);
   }
   onChangeSearch = (event) => {
@@ -89,34 +93,29 @@ class App extends Component {
     this.state.requestOptions.body = JSON.stringify(this.state.raw)
     fetch(`https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs`, this.state.requestOptions)
       .then(response => response.text())
-      .then(result =>{ 
-      const data=JSON.parse(result)
-      this.displayFace(this.calculateFaceLocation(data))
+      .then(result => {
+        const data = JSON.parse(result)
+        this.displayFace(this.calculateFaceLocation(data))
       })
 
       .catch(error => console.log('error', error));
   }
   render() {
     return (
-      <div className="App">
-        <Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange} />
-        { this.state.route==="home"?
-          <div>
-          <Logo />
-          <ImageLinkForm onChangeSearch={this.onChangeSearch} onButtonClick={this.onButtonClick} />
-          <FaceRecognition box={this.state.box} imageURL={this.state.ImageURL} />
-          </div>
-          :(
-            this.state.route==="signin"?
-            <Signin onRouteChange={this.onRouteChange}/>
-            :<Register  onRouteChange={this.onRouteChange}/>
+      <Router>
+        <div className="App">
 
-          )
-          
-          
-        }
+          <Routes>
+            <Route exact path="/home" element={<><Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange} /><Logo />
+              <ImageLinkForm onChangeSearch={this.onChangeSearch} onButtonClick={this.onButtonClick} />
+              <FaceRecognition box={this.state.box} imageURL={this.state.ImageURL} /></>} />
+            <Route exact path="/" element={<><NavigationAuth></NavigationAuth><Signin onRouteChange={this.onRouteChange} /></>} />
+            <Route exact path="/signup" element={<><NavigationAuth></NavigationAuth><Register onRouteChange={this.onRouteChange} /></>} />
+            <Route exact path="/dashboard" element={<><Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange} /><Dashboard></Dashboard></>} />
+          </Routes>
 
-      </div>
+        </div>
+      </Router>
     );
   }
 

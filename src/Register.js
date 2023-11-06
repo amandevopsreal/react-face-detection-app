@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './Register.css'
+import { useNavigate } from "react-router-dom"
 const Register = ({ onRouteChange }) => {
     const [user, setUser] = useState({
         name: "",
@@ -13,6 +14,7 @@ const Register = ({ onRouteChange }) => {
             [e.target.name]: e.target.value
         })
     }
+    const navigate = useNavigate();
     const onRegister = async () => {
         const response = await fetch("http://localhost:5000/api/auth/createuser", {
             method: "post",
@@ -28,6 +30,7 @@ const Register = ({ onRouteChange }) => {
         if (json.success) {
             localStorage.setItem("token", json.authtoken)
             onRouteChange("home")
+            navigate("/home")
 
         }
         else {
